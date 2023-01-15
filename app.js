@@ -13,6 +13,7 @@ const axios = require('axios');
 const http = require('http');
 const socketIO = require('socket.io');
 
+const port = process.env.PORT || 8000;
 const app = express();
 const server = http.createServer(app);
 const io = socketIO(server);
@@ -246,6 +247,6 @@ app.get('/kirim0',(req, res)=>{
 });
 
   //Menjalankan server
-server.listen(8080,function(){
-    console.log('App berjalan di port :'+ 8080);
+server.listen(port, function() {
+  console.log('App running on *: ' + port);
 });
