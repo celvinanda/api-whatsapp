@@ -13,7 +13,7 @@ const axios = require('axios');
 const http = require('http');
 const socketIO = require('socket.io');
 
-const port = process.env.PORT || 8000;
+const port = process.env.PORT || 5000;
 const app = express();
 const server = http.createServer(app);
 const io = socketIO(server);
@@ -78,52 +78,40 @@ client.on('message', msg => {
 client.initialize();
 
 //Socet IO
+// Socket IO
 io.on('connection', function(socket) {
-    socket.emit('message', 'Connecting...');
-  
-    client.on('qr', (qr) => {
-      console.log('QR RECEIVED', qr);
-      qrcode.toDataURL(qr, (err, url) => {
-        socket.emit('qr', url);
-        socket.emit('message', 'QR Code received, scan please!');
-      });
-    });
-  
-    client.on('ready', () => {
-      socket.emit('ready', 'Whatsapp is ready!');
-      socket.emit('message', 'Whatsapp is ready!');
-    });
+  socket.emit('message', 'Connecting...');
 
-    client.on('loading_screen', (percent, message) => {
-        if(percent == 0 ){
-            socket.emit('message', 'Sedang mendapatkan chat');
-            console.log('LOADING SCREEN', percent, message);
-        }else if(percent == 100){
-            socket.emit('message', 'Berhasil menyalin chat');
-            console.log('LOADING SCREEN', percent, message);
-        }else{
-            socket.emit('message', percent, message);
-            console.log('LOADING SCREEN', percent, message);
-        }
-        
-    });
-  
-    client.on('authenticated', () => {
-      socket.emit('authenticated', 'Whatsapp is authenticated!');
-      socket.emit('message', 'Whatsapp is authenticated!');
-      console.log('AUTHENTICATED');
-    });
-  
-    client.on('auth_failure', function(session) {
-      socket.emit('message', 'Auth failure, restarting...');
-    });
-  
-    client.on('disconnected', (reason) => {
-      socket.emit('message', 'Whatsapp is disconnected!');
-      client.destroy();
-      client.initialize();
+  client.on('qr', (qr) => {
+    console.log('QR RECEIVED', qr);
+    qrcode.toDataURL(qr, (err, url) => {
+      socket.emit('qr', url);
+      socket.emit('message', 'QR Code received, scan please!');
     });
   });
+
+  client.on('ready', () => {
+    socket.emit('ready', 'Whatsapp is ready!');
+    socket.emit('message', 'Whatsapp is ready!');
+  });
+
+  client.on('authenticated', () => {
+    socket.emit('authenticated', 'Whatsapp is authenticated!');
+    socket.emit('message', 'Whatsapp is authenticated!');
+    console.log('AUTHENTICATED');
+  });
+
+  client.on('auth_failure', function(session) {
+    socket.emit('message', 'Auth failure, restarting...');
+  });
+
+  client.on('disconnected', (reason) => {
+    socket.emit('message', 'Whatsapp is disconnected!');
+    client.destroy();
+    client.initialize();
+  });
+});
+
 
   const checkRegisteredNumber = async function(number) {
     const isRegistered = await client.isRegisteredUser(number);
