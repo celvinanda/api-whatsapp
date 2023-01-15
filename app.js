@@ -33,6 +33,7 @@ app.get('/',(req, res)=>{
 })
 
 const client = new Client({
+   restartOnAuthFail: true,
     authStrategy: new LocalAuth(),
     puppeteer: {
         headless: true,
